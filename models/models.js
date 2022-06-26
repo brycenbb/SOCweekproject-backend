@@ -179,7 +179,7 @@ export async function makeNote(email, body) {
   if (check.rows.length > 0) {
     const update = await pool.query(
       'UPDATE notes set tags=tags || $1, note = note || $2 where userID=$3 AND week=$4 AND day=$5 returning *',
-      [body.tags, body.note, id, body.week, body.day]
+      [body.tags, ' ' + body.note, id, body.week, body.day]
     );
     console.log('updating!', update.rows);
     return update.rows;

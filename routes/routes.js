@@ -97,7 +97,7 @@ router.post('/notes', async function (req, res) {
     const newNote = await makeNote(req.query.email, req.body);
     const responseObject = {
       success: true,
-      message: 'Here is the note you searched for',
+      message: 'Here is the note you submitted',
       data: newNote,
     };
     return res.json(responseObject);

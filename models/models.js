@@ -169,6 +169,21 @@ export async function makeNote(email, body) {
     email,
   ]);
   let id = idres.rows[0].userid;
+  //first checks if there is a note for that week+day already, if there is, updates the note
+  //rather than making a new note entirely.
+  const check = await pool.query(
+    'Select * from notes where userID=$1 AND week=$2 AND day=$3;',
+    [id, body.week, body.day]
+  );
+  // console.log('hi', check.rows);
+  if (check.rows.length > 0) {
+    const update = await pool.query(
+      'UPDATE notes set tags=tags || $1, note = note || $2 where userID=$3 AND week=$4 AND day=$5 returning *',
+      [body.tags, body.note, id, body.week, body.day]
+    );
+    console.log('updating!', update.rows);
+    return update.rows;
+  }
   const res = await pool.query(
     'INSERT into notes (userID,week,day,tags,note) VALUES ($1,$2,$3,$4,$5)',
     [id, body.week, body.day, body.tags, body.note]
